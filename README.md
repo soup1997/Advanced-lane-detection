@@ -5,4 +5,4 @@
 * 목적 및 아이디어: Kalman Filter의 학습 및 응용, 다음 조사창의 위치를 단순한 평균으로 구하지 않고 Kalman Filter의 Estimation(Prediction, Update) 과정을 통해 다음 조사창의 위치를 결정 
 
 `State Matrix`
-> $x$ = $\begin{bmatrix}$y_pos$\end{bmatrix}$
+> $x$ = $\begin{bmatrix}y_pos\end{bmatrix}$
