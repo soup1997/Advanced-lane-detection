@@ -1,29 +1,32 @@
+# Linear Kalman Filter
+
 import numpy as np
 from filterpy.common import Q_discrete_white_noise
 from filterpy.kalman import KalmanFilter, logpdf
-from scipy.ndimage.filters import gaussian_filter
 
 class WindowFilter:
-    def __init__(self, pos_init=0.0, meas_variance=50, process_variance=1, uncertanity_init = 2 ** 30):
+    def __init__(self, pos_init= None, meas_variance=50, process_variance=1, uncertanity_init = 2 ** 30):
         self.kf = KalmanFilter(dim_x=2, dim_z=1)
+        self.dt = 0.5
+        
+        # Initial state estimate
+        self.kf.x = np.array([pos_init, 0])
+
+        # Process noise
+        self.kf.P = np.eye(self.kf.dim_x) * uncertanity_init
+
         # State transition function
-        self.kf.F = np.array([[1., 1], 
-                              [0., 0.5]])
+        self.kf.F = np.array([[1., self.dt], 
+                              [0., 1.]])
+        
+        # Process noise
+        self.kf.Q = Q_discrete_white_noise(dim=2, dt=self.dt, var=process_variance)
         
         # Measurement function
         self.kf.H = np.array([[1., 0.]])
         
-        # Initial state estimate
-        self.kf.x = np.array([pos_init, 0])
-        
-        # Process noise
-        self.kf.P = np.eye(self.kf.dim_x) * uncertanity_init
-        
         # Measurement noise
         self.kf.R = np.array([[meas_variance]])
-        
-        # POrocess noise
-        self.kf.Q = Q_discrete_white_noise(dim=2, dt=1, var=process_variance)
 
     def update(self, pos):
         self.kf.predict()
